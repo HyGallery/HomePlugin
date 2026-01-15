@@ -1,0 +1,39 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true 
+      - name: Set up JDK 24
+        uses: actions/setup-java@v4
+        with:
+          java-version: '24'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Verify Hytale Server JAR exists
+        run: |
+          if [ ! -f lib/HytaleServer.jar ]; then
+            echo "Error: HytaleServer.jar not found in lib/"
+            exit 1
+          fi
+          echo "JAR found, size: $(du -h lib/HytaleServer.jar | cut -f1)"
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VKarmaHomePlugin-${{ github.sha }}
+          path: target/VKarmaHomePlugin-*.jar
