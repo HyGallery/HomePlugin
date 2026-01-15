@@ -6,7 +6,7 @@
 
     <groupId>dev.homeplugin</groupId>
     <artifactId>VKarmaHomePlugin</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <packaging>jar</packaging>
 
     <name>VKarma-HomePlugin</name>
@@ -18,7 +18,6 @@
     </properties>
 
     <dependencies>
-        <!-- Hytale Server - stored in lib/ via Git LFS -->
         <dependency>
             <groupId>com.hypixel.hytale</groupId>
             <artifactId>hytale-server</artifactId>
@@ -27,12 +26,17 @@
             <systemPath>${project.basedir}/lib/HytaleServer.jar</systemPath>
         </dependency>
 
-        <!-- JetBrains Annotations -->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>26.0.2-1</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.13.2</version>
         </dependency>
     </dependencies>
 

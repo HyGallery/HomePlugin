@@ -3,7 +3,9 @@ package dev.vkarma;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
+import dev.vkarma.commands.DelHomeCommand;
 import dev.vkarma.commands.HomeCommand;
+import dev.vkarma.commands.HomeListCommand;
 import dev.vkarma.commands.SetHomeCommand;
 import dev.vkarma.data.DataHandler;
 
@@ -33,7 +35,9 @@ public class HomePlugin extends JavaPlugin {
         try {
             this.getCommandRegistry().registerCommand(new HomeCommand(getDataHandler()));
             this.getCommandRegistry().registerCommand(new SetHomeCommand(getDataHandler()));
-            LOGGER.atInfo().log("Successfully registered /home and /sethome commands");
+            this.getCommandRegistry().registerCommand(new HomeListCommand(getDataHandler()));
+            this.getCommandRegistry().registerCommand(new DelHomeCommand(getDataHandler()));
+            LOGGER.atInfo().log("Successfully registered home commands");
         } catch (Exception e) {
             LOGGER.atSevere().withCause(e).log("FAILED to register commands!");
             throw new RuntimeException("Command registration failed", e);

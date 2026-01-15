@@ -7,6 +7,8 @@ import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.protocol.*;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
+import com.hypixel.hytale.server.core.command.system.arguments.system.DefaultArg;
+import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractAsyncCommand;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
@@ -18,16 +20,21 @@ import dev.vkarma.data.Location;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.Color;
 import java.util.concurrent.CompletableFuture;
 
 public class SetHomeCommand extends AbstractAsyncCommand {
 
     private final DataHandler dataHandler;
+    private final DefaultArg<String> nameArg;
 
     public SetHomeCommand(DataHandler dataHandler) {
         super("sethome", "Set your home point");
         this.setPermissionGroup(GameMode.Adventure);
         this.dataHandler = dataHandler;
+
+        nameArg = withDefaultArg("name", "Name of this specific home point",
+                ArgTypes.STRING, "home", "home");
     }
 
     @NonNullDecl
@@ -76,9 +83,9 @@ public class SetHomeCommand extends AbstractAsyncCommand {
 
             Location location = new Location(copiedPosition, world.getName());
 
-            dataHandler.setHome(playerUuid, location);
+            dataHandler.setHome(playerUuid, context.get(nameArg), location);
 
-            context.sendMessage(Message.raw("Home Set!").color("green"));
+            context.sendMessage(Message.raw("Home '" + context.get(nameArg) + "' Set!").color(Color.GREEN));
         }, world);
 
 

@@ -11,6 +11,8 @@ import com.hypixel.hytale.protocol.Position;
 import com.hypixel.hytale.protocol.packets.player.ClientTeleport;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
+import com.hypixel.hytale.server.core.command.system.arguments.system.DefaultArg;
+import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractAsyncCommand;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
@@ -22,17 +24,22 @@ import dev.vkarma.data.DataHandler;
 import dev.vkarma.data.Location;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
+import java.awt.*;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class HomeCommand extends AbstractAsyncCommand {
 
     private final DataHandler dataHandler;
+    private final DefaultArg<String> nameArg;
 
     public HomeCommand(DataHandler dataHandler) {
         super("home", "Teleport to your home point");
         this.setPermissionGroup(GameMode.Adventure);
         this.dataHandler = dataHandler;
+
+        nameArg = withDefaultArg("name", "Name of this specific home point",
+                ArgTypes.STRING, "home", "home");
     }
 
     @NonNullDecl
@@ -40,7 +47,7 @@ public class HomeCommand extends AbstractAsyncCommand {
     protected CompletableFuture<Void> executeAsync(CommandContext context) {
 
         if (!(context.isPlayer())) {
-            context.sendMessage(Message.raw("Error: attempted to teleport home from a non-player context"));
+            context.sendMessage(Message.raw("Error: attempted to teleport home from a non-player context").color(Color.RED));
             return CompletableFuture.completedFuture(null);
         }
 
@@ -48,7 +55,7 @@ public class HomeCommand extends AbstractAsyncCommand {
         Ref<EntityStore> ref = player.getReference();
 
         if (ref == null || !ref.isValid()) {
-            context.sendMessage(Message.raw("Error: invalid ref"));
+            context.sendMessage(Message.raw("Error: invalid ref").color(Color.RED));
             return CompletableFuture.completedFuture(null);
         }
 
@@ -59,15 +66,17 @@ public class HomeCommand extends AbstractAsyncCommand {
             PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
 
             if (playerRef == null) {
-                context.sendMessage(Message.raw("Error: could not find player data"));
+                context.sendMessage(Message.raw("Error: could not find player data").color(Color.RED));
                 return;
             }
 
             String playerUuid = playerRef.getUuid().toString();
-            Location homePosition = dataHandler.getHome(playerUuid);
+            Location homePosition = dataHandler.getHome(playerUuid, context.get(nameArg));
 
             if (homePosition == null) {
-                context.sendMessage(Message.raw("You don't have a home set!"));
+                context.sendMessage(Message.raw("You do not have a home named '" + context.get(nameArg)
+                    + "'").color(Color.ORANGE));
+                context.sendMessage(Message.raw("Current homes: " + dataHandler.getHomeNames(playerUuid)));
                 return;
             }
 
@@ -88,11 +97,10 @@ public class HomeCommand extends AbstractAsyncCommand {
                 }
 
                 if (targetWorld == null) {
-                    context.sendMessage(Message.raw("Error: world '" + targetWorldName + "' doesn't exist"));
+                    context.sendMessage(Message.raw("Error: world '" + targetWorldName + "' doesn't exist").color(Color.ORANGE));
                     return;
                 }
                 final World finalTargetWorld = targetWorld;
-                context.sendMessage(Message.raw("Teleporting to " + targetWorldName + "..."));
 
                 try {
                     // Step 1: Remove player from current world
@@ -110,18 +118,18 @@ public class HomeCommand extends AbstractAsyncCommand {
                     // Step 4: Wait for transfer and handle result
                     transferFuture.thenAccept(resultPlayerRef -> {
                         if (resultPlayerRef != null) {
-                            context.sendMessage(Message.raw("Teleported home to " + targetWorldName + "!"));
+                            context.sendMessage(Message.raw("Changed world to " + targetWorldName).color(Color.GREEN));
                         } else {
-                            context.sendMessage(Message.raw("Error: failed to transfer to target world"));
+                            context.sendMessage(Message.raw("Error: failed to transfer to target world").color(Color.ORANGE));
                         }
                     }).exceptionally(throwable -> {
-                        context.sendMessage(Message.raw("Error during transfer: " + throwable.getMessage()));
+                        context.sendMessage(Message.raw("Error during transfer: " + throwable.getMessage()).color(Color.ORANGE));
                         throwable.printStackTrace();
                         return null;
                     });
 
                 } catch (Exception e) {
-                    context.sendMessage(Message.raw("Error: " + e.getMessage()));
+                    context.sendMessage(Message.raw("Error: " + e.getMessage()).color(Color.ORANGE));
                     e.printStackTrace();
                 }
             } else {
@@ -129,7 +137,7 @@ public class HomeCommand extends AbstractAsyncCommand {
                 TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
 
                 if (transform == null) {
-                    context.sendMessage(Message.raw("Error: could not access player transform"));
+                    context.sendMessage(Message.raw("Error: could not access player transform").color(Color.ORANGE));
                     return;
                 }
 
@@ -142,7 +150,7 @@ public class HomeCommand extends AbstractAsyncCommand {
 
                 player.getPlayerConnection().write(new ClientTeleport((byte) 0, modelTransform, true));
 
-                context.sendMessage(Message.raw("Teleported home!"));
+                context.sendMessage(Message.raw("Teleported home!").color(Color.GREEN));
             }
         }, world);
     }
