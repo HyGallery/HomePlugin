@@ -1,0 +1,19 @@
+{
+  "Group": "dev.vkarma",
+  "Name": "HomePlugin",
+  "Version": "0.1.0",
+  "Description": "Home plugin for Hytale",
+  "Authors": [
+    {
+      "Name": "ValorousKarma",
+      "Email": "dylandevmail@gmail.com"
+    }
+  ],
+  "Website": "",
+  "ServerVersion": "*",
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "DisabledByDefault": false,
+  "IncludesAssetPack": false,
+  "Main": "dev.vkarma.HomePlugin"
+}
