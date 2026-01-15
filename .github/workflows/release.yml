@@ -35,47 +35,18 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      - name: Create source archives
-        run: |
-          # Create archives directory outside the source tree
-          mkdir -p /tmp/releases
-          
-          # Create zip archive
-          zip -r /tmp/releases/VKarmaHomePlugin-${{ github.ref_name }}-source.zip . \
-            -x "*.git*" "target/*" "lib/*" "*.class"
-          
-          # Create tar.gz archive  
-          tar -czf /tmp/releases/VKarmaHomePlugin-${{ github.ref_name }}-source.tar.gz \
-            --exclude='.git*' \
-            --exclude='target' \
-            --exclude='lib' \
-            --exclude='*.class' \
-            .
-          
-          # Move archives to workspace
-          mv /tmp/releases ./releases
-
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            target/VKarmaHomePlugin-*.jar
-            releases/VKarmaHomePlugin-${{ github.ref_name }}-source.zip
-            releases/VKarmaHomePlugin-${{ github.ref_name }}-source.tar.gz
+            target/OpenHomes-*.jar
           body: |
-            ## VKarma Home Plugin ${{ github.ref_name }}
+            ## OpenHomes plugin ${{ github.ref_name }}
             
             ### Installation
-            1. Download `VKarmaHomePlugin-0.1.0.jar`
+            1. Download `OpenHomes-{version}.jar`
             2. Place in your Hytale server's `plugins/` folder
             3. Restart the server
-            
-            ### Commands
-            - `/sethome` - Set your home location
-            - `/home` - Teleport to your home
-            
-            ### Changes
-            See commit history for details.
           draft: false
           prerelease: false
         env:

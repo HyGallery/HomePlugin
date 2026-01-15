@@ -1,8 +1,8 @@
 {
-  "Group": "dev.vkarma",
-  "Name": "HomePlugin",
+  "Group": "dev.hygallery",
+  "Name": "OpenHomes",
   "Version": "0.1.1",
-  "Description": "Home plugin for Hytale",
+  "Description": "Opensource Home plugin for Hytale",
   "Authors": [
     {
       "Name": "ValorousKarma",
@@ -15,5 +15,5 @@
   "OptionalDependencies": {},
   "DisabledByDefault": false,
   "IncludesAssetPack": false,
-  "Main": "dev.vkarma.HomePlugin"
+  "Main": "dev.hygallery.HomePlugin"
 }

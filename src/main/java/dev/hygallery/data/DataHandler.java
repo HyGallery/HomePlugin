@@ -1,4 +1,4 @@
-package dev.vkarma.data;
+package dev.hygallery.data;
 
 import com.google.gson.*;
 import com.hypixel.hytale.logger.HytaleLogger;
@@ -23,7 +23,7 @@ public class DataHandler {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
 
         // Create data directory
-        File dataFolder = new File("plugins/VKarma_HomePlugin");
+        File dataFolder = new File("plugins/openhomes");
 
         LOGGER.atInfo().log("Data folder path: " + dataFolder.getAbsolutePath());
 

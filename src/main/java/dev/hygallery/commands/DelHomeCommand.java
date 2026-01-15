@@ -1,4 +1,4 @@
-package dev.vkarma.commands;
+package dev.hygallery.commands;
 
 
 import com.hypixel.hytale.protocol.*;
@@ -7,7 +7,7 @@ import com.hypixel.hytale.server.core.command.system.AbstractCommand;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
 import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
-import dev.vkarma.data.DataHandler;
+import dev.hygallery.data.DataHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,8 +21,8 @@ public class DelHomeCommand extends AbstractCommand {
 
     public DelHomeCommand(DataHandler dataHandler) {
         super("delhome", "List your current homes");
-        this.setPermissionGroup(GameMode.Adventure);
         this.dataHandler = dataHandler;
+        requirePermission("openhomes.use");
 
         nameArg = withRequiredArg("name", "The name of the home to be deleted", ArgTypes.STRING);
     }
@@ -42,7 +42,7 @@ public class DelHomeCommand extends AbstractCommand {
             context.sendMessage(Message.raw("Successfully deleted home '" + homeName).color(Color.GREEN));
         } else {
             context.sendMessage(Message.raw("Failed to delete home '" + homeName + "', " +
-                    "list your current homes with /homelist").color(Color.ORANGE));
+                    "list your current homes with /lsh").color(Color.ORANGE));
         }
 
         return CompletableFuture.completedFuture(null);

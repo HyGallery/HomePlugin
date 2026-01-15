@@ -1,4 +1,4 @@
-package dev.vkarma.data;
+package dev.hygallery.data;
 
 import com.hypixel.hytale.math.vector.Vector3d;
 

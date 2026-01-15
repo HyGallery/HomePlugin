@@ -1,18 +1,15 @@
-package dev.vkarma.commands;
+package dev.hygallery.commands;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.vector.Transform;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.protocol.Direction;
-import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.protocol.ModelTransform;
 import com.hypixel.hytale.protocol.Position;
 import com.hypixel.hytale.protocol.packets.player.ClientTeleport;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.command.system.arguments.system.DefaultArg;
-import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractAsyncCommand;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
@@ -20,8 +17,8 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.vkarma.data.DataHandler;
-import dev.vkarma.data.Location;
+import dev.hygallery.data.DataHandler;
+import dev.hygallery.data.Location;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.awt.*;
@@ -31,15 +28,20 @@ import java.util.concurrent.CompletableFuture;
 public class HomeCommand extends AbstractAsyncCommand {
 
     private final DataHandler dataHandler;
-    private final DefaultArg<String> nameArg;
 
     public HomeCommand(DataHandler dataHandler) {
         super("home", "Teleport to your home point");
-        this.setPermissionGroup(GameMode.Adventure);
         this.dataHandler = dataHandler;
+        setAllowsExtraArguments(true);
+        requirePermission("openhomes.use");
+    }
 
-        nameArg = withDefaultArg("name", "Name of this specific home point",
-                ArgTypes.STRING, "home", "home");
+    private String getHomeName(CommandContext context) {
+        String inp = context.getInputString().trim();
+        String[] args = inp.split("\\s+");
+        if (args.length > 1)
+            return args[1];
+        return null;
     }
 
     @NonNullDecl
@@ -71,10 +73,15 @@ public class HomeCommand extends AbstractAsyncCommand {
             }
 
             String playerUuid = playerRef.getUuid().toString();
-            Location homePosition = dataHandler.getHome(playerUuid, context.get(nameArg));
+
+            // default to "home" if no name is given
+            String homeName = getHomeName(context);
+            homeName = ((homeName == null) ? "home" : homeName).toLowerCase();
+
+            Location homePosition = dataHandler.getHome(playerUuid, homeName);
 
             if (homePosition == null) {
-                context.sendMessage(Message.raw("You do not have a home named '" + context.get(nameArg)
+                context.sendMessage(Message.raw("You do not have a home named '" + homeName
                     + "'").color(Color.ORANGE));
                 context.sendMessage(Message.raw("Current homes: " + dataHandler.getHomeNames(playerUuid)));
                 return;

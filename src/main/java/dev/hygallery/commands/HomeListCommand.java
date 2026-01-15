@@ -1,11 +1,11 @@
-package dev.vkarma.commands;
+package dev.hygallery.commands;
 
 
 import com.hypixel.hytale.protocol.*;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.AbstractCommand;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import dev.vkarma.data.DataHandler;
+import dev.hygallery.data.DataHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,9 +17,9 @@ public class HomeListCommand extends AbstractCommand {
     private final DataHandler dataHandler;
 
     public HomeListCommand(DataHandler dataHandler) {
-        super("homelist", "List your current homes");
-        this.setPermissionGroup(GameMode.Adventure);
+        super("lsh", "List your current homes");
         this.dataHandler = dataHandler;
+        requirePermission("openhomes.use");
     }
 
     @Nullable

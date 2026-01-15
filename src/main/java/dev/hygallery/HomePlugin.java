@@ -1,13 +1,13 @@
-package dev.vkarma;
+package dev.hygallery;
 
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
-import dev.vkarma.commands.DelHomeCommand;
-import dev.vkarma.commands.HomeCommand;
-import dev.vkarma.commands.HomeListCommand;
-import dev.vkarma.commands.SetHomeCommand;
-import dev.vkarma.data.DataHandler;
+import dev.hygallery.commands.DelHomeCommand;
+import dev.hygallery.commands.HomeCommand;
+import dev.hygallery.commands.HomeListCommand;
+import dev.hygallery.commands.SetHomeCommand;
+import dev.hygallery.data.DataHandler;
 
 import javax.annotation.Nonnull;
 

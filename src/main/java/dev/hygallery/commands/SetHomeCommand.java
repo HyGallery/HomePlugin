@@ -1,4 +1,4 @@
-package dev.vkarma.commands;
+package dev.hygallery.commands;
 
 
 import com.hypixel.hytale.component.Ref;
@@ -7,16 +7,14 @@ import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.protocol.*;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.command.system.arguments.system.DefaultArg;
-import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractAsyncCommand;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import dev.vkarma.data.DataHandler;
-import dev.vkarma.data.Location;
+import dev.hygallery.data.DataHandler;
+import dev.hygallery.data.Location;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,15 +24,20 @@ import java.util.concurrent.CompletableFuture;
 public class SetHomeCommand extends AbstractAsyncCommand {
 
     private final DataHandler dataHandler;
-    private final DefaultArg<String> nameArg;
 
     public SetHomeCommand(DataHandler dataHandler) {
         super("sethome", "Set your home point");
-        this.setPermissionGroup(GameMode.Adventure);
         this.dataHandler = dataHandler;
+        setAllowsExtraArguments(true);
+        requirePermission("openhomes.use");
+    }
 
-        nameArg = withDefaultArg("name", "Name of this specific home point",
-                ArgTypes.STRING, "home", "home");
+    private String getHomeName(CommandContext context) {
+        String inp = context.getInputString().trim();
+        String[] args = inp.split("\\s+");
+        if (args.length > 1)
+            return args[1];
+        return null;
     }
 
     @NonNullDecl
@@ -83,9 +86,13 @@ public class SetHomeCommand extends AbstractAsyncCommand {
 
             Location location = new Location(copiedPosition, world.getName());
 
-            dataHandler.setHome(playerUuid, context.get(nameArg), location);
+            // default to "home" if no name is given
+            String homeName = getHomeName(context);
+            homeName = ((homeName == null) ? "home" : homeName).toLowerCase();
 
-            context.sendMessage(Message.raw("Home '" + context.get(nameArg) + "' Set!").color(Color.GREEN));
+            dataHandler.setHome(playerUuid, homeName, location);
+
+            context.sendMessage(Message.raw("Home '" + homeName + "' Set!").color(Color.GREEN));
         }, world);
 
 
